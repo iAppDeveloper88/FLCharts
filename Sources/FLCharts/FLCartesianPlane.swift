@@ -281,15 +281,16 @@ public class FLCartesianPlane: UIView, FLStylable {
                 
                 let chartTickY = yPosition(forValue: value)
                 let (text, size) = textSizeFrom(value: value)
-                labels.add(Label(text: text, size: size, point: CGPoint(x: 0, y: chartTickY), type: .yLabel))
+                let label = Label(text: text, size: size, point: CGPoint(x: 0, y: chartTickY), type: .yLabel)
+                // This prevents the last label to overlap the max label.
+                if label.point.y - chartTop > 15 {
+                    labels.add(label)
+                }
             }
         }
         
-        // This prevents the last label to overlap the max label.
-        if let lastLabel = labels.find(type: .yLabel).last, lastLabel.point.y - chartTop > 15 {
-            let (text, size) = textSizeFrom(value: dataMaxValue)
-            labels.add(Label(text: text, size: size, point: CGPoint(x: 0, y: chartTop), type: .topYLabel))
-        }
+        let (text, size) = textSizeFrom(value: dataMaxValue)
+        labels.add(Label(text: text, size: size, point: CGPoint(x: 0, y: chartTop), type: .topYLabel))
         
         config.setMargin(for: yAxisPosition, horizontalMargin: maxYLabelWidth + config.tick.lineLength + tickLabelSpacing)
         
